@@ -1,0 +1,63 @@
+// Connect to the MongoDB server
+db10; // Replace with your actual database name
+
+// Step 1: Create the Books collection and insert sample data
+db.Books.insertMany([
+    { TITLE: "Book 1", DESCRIPTION: "Description 1", BY: "Ajay", URL: "http://example.com/book1", TAGS: ["tag1", "tag2"], LIKES: 10 },
+    { TITLE: "Book 2", DESCRIPTION: "Description 2", BY: "Ajay", URL: "http://example.com/book2", TAGS: ["tag1"], LIKES: 5 },
+    { TITLE: "Book 3", DESCRIPTION: "Description 3", BY: "Ajay", URL: "http://example.com/book3", TAGS: ["tag2"], LIKES: 15 },
+    { TITLE: "Book 4", DESCRIPTION: "Description 4", BY: "Someone Else", URL: "http://example.com/book4", TAGS: ["tag3"], LIKES: 20 },
+    { TITLE: "Book 5", DESCRIPTION: "Description 5", BY: "Ajay", URL: "http://example.com/book5", TAGS: ["tag2", "tag3"], LIKES: 8 }
+]);
+
+// Step 2: Aggregation Queries
+
+// 2.1: Find the number of books published by "Ajay"
+const numberOfBooksByAjay = db.Books.countDocuments({ BY: "Ajay" });
+print("Number of books published by Ajay:", numberOfBooksByAjay);
+
+// 2.2: Find minimum and maximum likes published by "Ajay"
+const likesRange = db.Books.aggregate([
+    { $match: { BY: "Ajay" } },
+    {
+        $group: {
+            _id: null,
+            minLikes: { $min: "$LIKES" },
+            maxLikes: { $max: "$LIKES" }
+        }
+    }
+]).toArray();
+print("Minimum and Maximum likes published by Ajay:", likesRange);
+
+// 2.3: Find the average number of likes of books published by "Ajay"
+const averageLikes = db.Books.aggregate([
+    { $match: { BY: "Ajay" } },
+    {
+        $group: {
+            _id: null,
+            avgLikes: { $avg: "$LIKES" }
+        }
+    }
+]).toArray();
+print("Average number of likes of books published by Ajay:", averageLikes);
+
+// 2.4: Find the first and last book published by "Ajay"
+const firstAndLastBook = db.Books.aggregate([
+    { $match: { BY: "Ajay" } },
+    { $sort: { TITLE: 1 } }, // Sort by title (or another field for order)
+    {
+        $group: {
+            _id: null,
+            firstBook: { $first: "$TITLE" },
+            lastBook: { $last: "$TITLE" }
+        }
+    }
+]).toArray();
+print("First and Last book published by Ajay:", firstAndLastBook);
+
+// Step 3: Create an index on the author name
+db.Books.createIndex({ BY: 1 });
+
+// Step 4: Display books published by "Ajay" and check index usage
+const ajayBooks = db.Books.find({ BY: "Ajay" }).hint({ BY: 1 }).toArray();
+print("Books published by Ajay:", ajayBooks);
