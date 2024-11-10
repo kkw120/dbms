@@ -1,0 +1,38 @@
+CREATE TABLE areas (
+radius NUMBER,
+area NUMBER,
+perimeter NUMBER
+);
+
+DECLARE
+r1 NUMBER := 5; -- Example starting radius (input)
+r2 NUMBER := 10; -- Example ending radius (input)
+radius NUMBER;
+area NUMBER;
+perimeter NUMBER;
+BEGIN
+-- Exception handling for invalid input range
+IF r1 <= 0 OR r2 <= 0 THEN
+RAISE_APPLICATION_ERROR(-20001, 'Radius values must be positive.');
+ELSIF r1 > r2 THEN
+RAISE_APPLICATION_ERROR(-20002, 'Starting radius (r1) must be less than or 
+equal to ending radius (r2).');
+END IF;
+-- Loop through the radius range from r1 to r2
+FOR radius IN r1..r2 LOOP
+-- Calculate area and perimeter
+area := 3.14159 * radius * radius; -- Area = π * r²
+perimeter := 2 * 3.14159 * radius; -- Perimeter = 2 * π * r
+-- Insert the calculated values into the 'areas' table
+INSERT INTO areas (radius, area, perimeter)
+VALUES (radius, area, perimeter);
+END LOOP;
+-- Commit the transaction to save changes
+COMMIT;
+EXCEPTION
+-- Handle any unexpected exceptions
+WHEN OTHERS THEN
+-- Rollback if any exception occurs
+ROLLBACK;
+DBMS_OUTPUT.PUT_LINE('Error: ' || SQLERRM);
+END;

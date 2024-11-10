@@ -1,0 +1,25 @@
+CREATE TABLE areas (
+    length NUMBER,
+    breadth NUMBER,
+    area NUMBER,
+    perimeter NUMBER
+);
+
+
+DECLARE
+    v_length NUMBER;
+    v_breadth NUMBER;
+    v_area NUMBER;
+    v_perimeter NUMBER;
+BEGIN
+    FOR v_length IN 10..20 LOOP
+        FOR v_breadth IN 5..10 LOOP
+            v_area := v_length * v_breadth;
+            v_perimeter := 2 * (v_length + v_breadth);
+            INSERT INTO areas (length, breadth, area, perimeter)
+            VALUES (v_length, v_breadth, v_area, v_perimeter);
+        END LOOP;
+    END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('Area and Perimeter calculations completed and stored in the areas table.');
+END;

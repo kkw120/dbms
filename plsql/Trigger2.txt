@@ -1,0 +1,31 @@
+CREATE TABLE Student (
+roll INT PRIMARY KEY,
+name VARCHAR2(100)
+);
+
+CREATE TABLE Student_Audit (
+roll INT,
+name VARCHAR2(100),
+action VARCHAR2(10), -- Stores 'UPDATE' or 'DELETE'
+action_date DATE
+);
+
+-- Trigger to capture updates on Student records
+CREATE OR REPLACE TRIGGER student_update_audit
+BEFORE UPDATE ON Student
+FOR EACH ROW
+BEGIN
+INSERT INTO Student_Audit (roll, name, action, action_date)
+VALUES (:OLD.roll, :OLD.name, 'UPDATE', SYSDATE);
+END;
+/
+
+-- Trigger to capture deletions from Student records
+CREATE OR REPLACE TRIGGER student_delete_audit
+BEFORE DELETE ON Student
+FOR EACH ROW
+BEGIN
+INSERT INTO Student_Audit (roll, name, action, action_date)
+VALUES (:OLD.roll, :OLD.name, 'DELETE', SYSDATE);
+END;
+/

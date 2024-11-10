@@ -1,0 +1,48 @@
+CREATE TABLE Borrower1 (
+    Name VARCHAR(50),
+    Issue_date date,
+    Book_Name VARCHAR(50),
+    Status VARCHAR(50)
+);
+
+CREATE TABLE Fine1 (
+    Name VARCHAR(50),
+    Return_date date,
+    Amount Number
+);
+
+INSERT INTO Borrower1 (Name, Issue_date, Book_Name, Status)
+VALUES ('Sam Bahadur', TO_DATE('2024-07-01', 'YYYY-MM-DD'), 'OLQ Like Qualities', 'I');
+INSERT INTO Borrower1 (Name, Issue_date, Book_Name, Status)
+VALUES ('Om Patil', TO_DATE('2024-10-28', 'YYYY-MM-DD'), 'Yayati', 'I');
+
+select * from Borrower1;
+select * from Fine1;
+
+
+DECLARE
+    v_days NUMBER;
+    v_fine NUMBER := 0;
+BEGIN
+    SELECT (SYSDATE - Issue_date) INTO v_days FROM Borrower1 WHERE Name = 'Om Patil';
+
+    IF v_days BETWEEN 10 AND 20 THEN
+        v_fine := v_days * 2;
+    ELSIF v_days > 20 THEN
+        v_fine := v_days * 20;
+    ELSE
+        v_fine := v_days * 5;
+    END IF;
+
+    INSERT INTO Fine1 (Name, Return_date, Amount) VALUES ('Om Patil', SYSDATE, v_fine);
+    UPDATE Borrower1 SET Status = 'R' WHERE Name = 'Om Patil';
+
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('No records found for Om Patil.');
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ');
+END;
+
+
+

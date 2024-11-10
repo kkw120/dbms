@@ -1,0 +1,88 @@
+-- Step 1: Create the employee and salary tables
+CREATE TABLE employee (
+    empid NUMBER PRIMARY KEY,
+    name VARCHAR2(100),
+    basic_salary NUMBER,
+    type VARCHAR2(20)
+);
+
+
+
+CREATE TABLE salary (
+    empid NUMBER,
+    name VARCHAR2(100),
+    basic_salary NUMBER,
+    type VARCHAR2(20),
+    da NUMBER,
+    hra NUMBER,
+    gross_salary NUMBER,
+    income_tax NUMBER,
+    net_salary NUMBER
+);
+
+
+
+
+-- Step 2: Insert sample data into employee table
+INSERT INTO employee (empid, name, basic_salary, type)
+VALUES (101, 'John Smith', 30000, 'Permanent');
+
+INSERT INTO employee (empid, name, basic_salary, type)
+VALUES (102, 'Jane Doe', 15000, 'Permanent');
+
+INSERT INTO employee (empid, name, basic_salary, type)
+VALUES (103, 'Bob Brown', 10000, 'Temporary');
+
+INSERT INTO employee (empid, name, basic_salary, type)
+VALUES (104, 'Alice White', 18000, 'Permanent');
+
+INSERT INTO employee (empid, name, basic_salary, type)
+VALUES (105, 'Charlie Black', 12000, 'Temporary');
+
+INSERT INTO employee (empid, name, basic_salary, type)
+VALUES (106, 'Diana Green', 25000, 'Permanent');
+
+
+
+
+-- Step 3: PL/SQL block to calculate Gross and Net Salary and insert into salary table
+DECLARE
+    v_empid NUMBER;
+    v_name VARCHAR2(100);
+    v_basic_salary NUMBER;
+    v_type VARCHAR2(20);
+    v_da NUMBER;
+    v_hra NUMBER;
+    v_gross_salary NUMBER;
+    v_income_tax NUMBER := 2000;
+    v_net_salary NUMBER;
+BEGIN
+    FOR employee IN (SELECT empid, name, basic_salary, type FROM employee) LOOP
+        v_empid := employee.empid;
+        v_name := employee.name;
+        v_basic_salary := employee.basic_salary;
+        v_type := employee.type;
+        
+        IF v_type = 'Permanent' THEN
+            v_da := v_basic_salary * 1.15;
+            v_hra := v_basic_salary * 0.12;
+            IF v_hra > 20000 THEN
+                v_hra := 20000;
+            END IF;
+            v_gross_salary := v_basic_salary + v_da + v_hra;
+            v_net_salary := v_gross_salary - v_income_tax;
+        
+        ELSIF v_type = 'Temporary' THEN
+            v_da := 0;
+            v_hra := 0;
+            v_gross_salary := v_basic_salary;
+            v_net_salary := v_gross_salary - v_income_tax;
+        END IF;
+
+        INSERT INTO salary (empid, name, basic_salary, type, da, hra, gross_salary, income_tax, net_salary)
+        VALUES (v_empid, v_name, v_basic_salary, v_type, v_da, v_hra, v_gross_salary, v_income_tax, v_net_salary);
+    END LOOP;
+    
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('Salary calculations completed and stored in the salary table.');
+END;

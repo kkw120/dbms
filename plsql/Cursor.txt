@@ -1,0 +1,47 @@
+CREATE TABLE EmployeesTYABB (
+    emp_id NUMBER(10),
+    emp_name VARCHAR2(100),
+    hire_date DATE,
+    experience NUMBER(2),
+    salary NUMBER(10, 2)
+);
+
+DECLARE
+    v_emp_id EmployeesTYABB.emp_id%TYPE;
+    v_emp_name EmployeesTYABB.emp_name%TYPE;
+    v_hire_date EmployeesTYABB.hire_date%TYPE;
+    v_experience EmployeesTYABB.experience%TYPE;
+    v_incentive_amt NUMBER(10, 2);
+
+    CURSOR emp_cursor IS
+        SELECT emp_id, emp_name, hire_date, experience
+        FROM EmployeesTYABB
+        WHERE TO_CHAR(hire_date, 'MMYYYY') = TO_CHAR(SYSDATE, 'MMYYYY');
+
+BEGIN
+    OPEN emp_cursor;
+
+    LOOP
+        FETCH emp_cursor INTO v_emp_id, v_emp_name, v_hire_date, v_experience;
+        EXIT WHEN emp_cursor%NOTFOUND;
+
+        IF v_experience >= 10 THEN
+            v_incentive_amt := 5000;
+        ELSIF v_experience >= 5 THEN
+            v_incentive_amt := 3000;
+        ELSE
+            v_incentive_amt := 1000;
+        END IF;
+
+        DBMS_OUTPUT.PUT_LINE('Employee ID: ' || v_emp_id);
+        DBMS_OUTPUT.PUT_LINE('Employee Name: ' || v_emp_name);
+        DBMS_OUTPUT.PUT_LINE('Hire Date: ' || TO_CHAR(v_hire_date, 'DD-MON-YYYY'));
+        DBMS_OUTPUT.PUT_LINE('Incentive Amount: Rs. ' || v_incentive_amt);
+        DBMS_OUTPUT.PUT_LINE('-----------------------------------------');
+    END LOOP;
+
+    CLOSE emp_cursor;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('An error occurred: ' || SQLERRM);
+END;
