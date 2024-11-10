@@ -1,0 +1,86 @@
+sudo systemctl start mongodb
+mongo
+use Ass8
+db.createCollection("books");
+db.books.insertMany([{
+TITLE: "mongodb",
+DESCRIPTION: "A NoSQL database",
+BY: "john",
+URL: "http://example.com/mongodb",
+TAGS: ["database", "nosql", "mongodb"],
+LIKES: 150
+},
+{
+TITLE: "nodejs",
+DESCRIPTION: "JavaScript runtime",
+BY: "jane",
+URL: "http://example.com/nodejs",
+TAGS: ["javascript", "node", "backend"],
+LIKES: 200
+},
+{
+TITLE: "react",
+DESCRIPTION: "A JavaScript library for building user interfaces",
+BY: "john",
+URL: "http://example.com/react",
+TAGS: ["javascript", "frontend", "react"],
+LIKES: 250
+},
+{
+TITLE: "nosql overview",
+DESCRIPTION: "Overview of NoSQL databases",
+BY: "alice",
+URL: "http://example.com/nosql",
+TAGS: ["database", "nosql"],
+LIKES: 50
+},
+{
+TITLE: "expressjs",
+DESCRIPTION: "Web framework for Node.js",
+BY: "bob",
+URL: "http://example.com/expressjs",
+TAGS: ["javascript", "node", "backend"],
+LIKES: 120
+}
+]);
+db.books.insertOne({
+TITLE: "angular",
+DESCRIPTION: "A framework for building web apps",
+BY: "john",
+URL: "http://example.com/angular",
+TAGS: ["javascript", "frontend", "angular"],
+LIKES: 180,
+USERNAME: "johnDoe",
+COMMENTS: [
+{ user: "jane", comment: "Great book!" },
+{ user: "bob", comment: "Very informative." }
+]
+});
+db.books.find({ TITLE: "mongodb" });
+db.books.find({
+$or: [{ BY: "john" }, { TITLE: "mongodb" }]
+});
+db.books.find({
+TITLE: "mongodb",
+BY: "john"
+});
+db.books.find({
+LIKES: { $gt: 10 }
+});
+db.books.find({
+LIKES: { $gt: 100 },
+$or: [{ TITLE: "mongodb" }, { BY: "john" }]
+});
+db.books.updateOne({ TITLE: "mongodb" }, { $set: { TITLE: "mongodb overview" } });
+db.books.deleteOne({ TITLE: "nosql overview" });
+db.books.find({ BY: "john" }).limit(2);
+db.books.find({ BY: "john" }).skip(1).limit(1);
+db.books.find().sort({ TITLE: 1 });
+db.books.save({
+TITLE: "vuejs",
+DESCRIPTION: "A progressive framework for building user interfaces",
+BY: "sam",
+URL: "http://example.com/vuejs",
+TAGS: ["javascript", "frontend", "vue"],
+LIKES: 220
+});

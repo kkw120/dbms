@@ -1,0 +1,75 @@
+sudo systemctl start mongodb
+mongo
+use Ass9
+db.createCollection("books");
+db.books.insertMany([{
+TITLE: "mongodb",
+DESCRIPTION: "A NoSQL database",
+BY: "john",
+URL: "http://example.com/mongodb",
+TAGS: ["database", "nosql", "mongodb"],
+LIKES: 150
+},
+{
+TITLE: "nodejs",
+DESCRIPTION: "JavaScript runtime",
+BY: "jane",
+URL: "http://example.com/nodejs",
+TAGS: ["javascript", "node", "backend"],
+LIKES: 200
+},
+{
+TITLE: "react",
+DESCRIPTION: "A JavaScript library for building user interfaces",
+BY: "john",
+URL: "http://example.com/react",
+TAGS: ["javascript", "frontend", "react"],
+LIKES: 250
+},
+{
+TITLE: "angular",
+DESCRIPTION: "A framework for building web apps",
+BY: "john",
+URL: "http://example.com/angular",
+TAGS: ["javascript", "frontend", "angular"],
+LIKES: 180
+},
+{
+TITLE: "vuejs",
+DESCRIPTION: "A progressive framework for building user interfaces",
+BY: "john",
+URL: "http://example.com/vuejs",
+TAGS: ["javascript", "frontend", "vue"],
+LIKES: 100
+}
+]);
+db.books.aggregate([
+{ $match: { BY: "john" } },
+{ $count: "totalBooksByJohn" }
+]);
+db.books.aggregate([
+{ $match: { BY: "john" } },
+{ $sort: { LIKES: 1 } },
+{ $limit: 1 }
+]);
+db.books.aggregate([
+{ $match: { BY: "john" } },
+{ $sort: { LIKES: -1 } },
+{ $limit: 1 }
+]);
+db.books.aggregate([
+{ $match: { BY: "john" } },
+{ $group: { _id: "$BY", avgLikes: { $avg: "$LIKES" } } }
+the average likes
+]);
+db.books.aggregate([
+{ $match: { BY: "john" } },
+{ $sort: { _id: 1 } },
+insertion time) { $limit: 1 }]);
+db.books.aggregate([
+{ $match: { BY: "john" } },
+{ $sort: { _id: -1 } },
+{ $limit: 1 }
+]);
+db.books.createIndex({ BY: 1 });
+db.books.find({ BY: "john" }).explain("executionStats");
