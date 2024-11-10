@@ -1,0 +1,105 @@
+Consider the given Database Schema: for problem statement 
+Dept (Deptno , Name , Location, Managerempid)
+Employees (name, empid, address, city, dob, date_of_joining,gender, salary, deptno)
+Gender must take value ‘M’ or ‘F’.
+Project(Projectid, title,city).
+Works (empid , Projectid, total_hrs_worked);
+Dependant(empid, name_of_dependant, age, relation)
+Primary Key is underlined.
+
+1. Develop DDL to implement the above schema enforcing primary key, check constraints (F 
+and M for gender) and foreign key constraints.
+CREATE TABLE Dept (
+Deptno INT PRIMARY KEY,
+Name VARCHAR(100),
+Location VARCHAR(50),
+Managerempid INT
+);
+CREATE TABLE Employees (
+name VARCHAR(100),
+empid INT PRIMARY KEY,
+address VARCHAR(150),
+city VARCHAR(50),
+dob DATE,
+date_of_joining DATE,
+gender CHAR(1) CHECK (gender IN ('M', 'F')),
+salary DECIMAL(10, 2),
+deptno INT,
+FOREIGN KEY (deptno) REFERENCES Dept(Deptno)
+);
+CREATE TABLE Project (
+Projectid INT PRIMARY KEY,
+title VARCHAR(100),
+city VARCHAR(50)
+);
+CREATE TABLE Works (
+empid INT,
+Projectid INT,
+total_hrs_worked INT,
+PRIMARY KEY (empid, Projectid),
+FOREIGN KEY (empid) REFERENCES Employees(empid),
+FOREIGN KEY (Projectid) REFERENCES Project(Projectid)
+);
+CREATE TABLE Dependant (
+empid INT,
+name_of_dependant VARCHAR(100),
+age INT,
+relation VARCHAR(50),
+PRIMARY KEY (empid, name_of_dependant),
+FOREIGN KEY (empid) REFERENCES Employees(empid)
+);
+
+2. Insert data in each table 
+-- Sample inserts for demonstration
+INSERT INTO Dept (Deptno, Name, Location, Managerempid) VALUES (1, 'HR', 'Mumbai', 
+101);
+INSERT INTO Dept (Deptno, Name, Location, Managerempid) VALUES (2, 'Engineering', 
+'Pune', 102);
+INSERT INTO Employees (name, empid, address, city, dob, date_of_joining, gender, 
+salary, deptno) 
+VALUES ('John Doe', 101, '123 Elm St', 'Mumbai', '1980-05-10', '2005-07-15', 'M', 
+75000, 1);
+INSERT INTO Employees (name, empid, address, city, dob, date_of_joining, gender, 
+salary, deptno) 
+VALUES ('Jane Smith', 102, '456 Oak St', 'Pune', '1985-03-20', '2010-09-10', 'F', 
+80000, 2);
+INSERT INTO Project (Projectid, title, city) VALUES (1, 'Testing Project', 'Pune');
+INSERT INTO Project (Projectid, title, city) VALUES (2, 'Development Project', 
+'Mumbai');
+INSERT INTO Works (empid, Projectid, total_hrs_worked) VALUES (101, 1, 100);
+INSERT INTO Works (empid, Projectid, total_hrs_worked) VALUES (102, 2, 200);
+INSERT INTO Dependant (empid, name_of_dependant, age, relation) VALUES (101, 'Emily 
+Doe', 15, 'Daughter');
+INSERT INTO Dependant (empid, name_of_dependant, age, relation) VALUES (102, 'Michael 
+Smith', 12, 'Son');
+
+3. “Testing Project”is canceled so delete that entry from project
+DELETE FROM Project
+WHERE title = 'Testing Project';
+
+4. Develop a SQL query to display all employees having salary > 50000
+SELECT name, empid, salary
+FROM Employees
+WHERE salary > 50000;
+
+5. Develop a SQL query to display all projects of “Pune”
+SELECT *
+FROM Project
+WHERE city = 'Pune';
+
+6. Develop a SQL query to display all dependants of employee id 102
+SELECT name_of_dependant, age, relation
+FROM Dependant
+WHERE empid = 102;
+
+7. Develop a SQL query to Find the number of employees working on each project.
+SELECT p.title, COUNT(w.empid) AS number_of_employees
+FROM Project p
+JOIN Works w ON p.Projectid = w.Projectid
+GROUP BY p.title;
+
+8. Develop a SQL query to find average salary of each department
+SELECT d.Name AS department_name, AVG(e.salary) AS average_salary
+FROM Dept d
+JOIN Employees e ON d.Deptno = e.deptno
+GROUP BY d.Name;

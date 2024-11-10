@@ -1,0 +1,83 @@
+Physician (reg_no, name, tel_no, city)
+Patient (p_name, street, city)
+visit(p_name, reg_no, date_of _visit, fees)
+
+1. Create tables and insert values
+CREATE TABLE Physician (
+reg_no INT PRIMARY KEY,
+name VARCHAR(100),
+tel_no VARCHAR(15),
+city VARCHAR(50)
+);
+CREATE TABLE Patient (
+p_name VARCHAR(100) PRIMARY KEY,
+street VARCHAR(100),
+city VARCHAR(50)
+);
+CREATE TABLE visit (
+p_name VARCHAR(100),
+reg_no INT,
+date_of_visit DATE,
+fees DECIMAL(10, 2),
+PRIMARY KEY (p_name, reg_no, date_of_visit),
+FOREIGN KEY (p_name) REFERENCES Patient(p_name),
+FOREIGN KEY (reg_no) REFERENCES Physician(reg_no)
+);
+-- Insert sample values for demonstration
+INSERT INTO Physician (reg_no, name, tel_no, city) VALUES (1, 'Dr. Sharma', 
+'1234567890', 'Mumbai');
+INSERT INTO Physician (reg_no, name, tel_no, city) VALUES (2, 'Dr. Mehta', 
+'0987654321', 'Nashik');
+INSERT INTO Patient (p_name, street, city) VALUES ('Dipak', '123 Main St', 'Nashik');
+INSERT INTO Patient (p_name, street, city) VALUES ('Mina', '456 Park Ave', 'Pune');
+INSERT INTO visit (p_name, reg_no, date_of_visit, fees) VALUES ('Dipak', 1, '2017-07-
+13', 6000);
+INSERT INTO visit (p_name, reg_no, date_of_visit, fees) VALUES ('Mina', 2, '2017-07-
+13', 4500);
+
+2. delete entry of p_name ‘Dipak’
+DELETE FROM Patient
+WHERE p_name = 'Dipak';
+
+3. Get the patient details of ‘Nashik’ city
+SELECT *
+FROM Patient
+WHERE city = 'Nashik';
+
+4. Count number of physician of ‘Mumbai’
+SELECT COUNT(*) AS physician_count
+FROM Physician
+WHERE city = 'Mumbai';
+
+5. Display a list of p_name in ascending order
+SELECT p_name
+FROM Patient
+ORDER BY p_name ASC;
+
+6. Get the patient name and fees, who paid fees > 5000
+SELECT p_name, fees
+FROM visit
+WHERE fees > 5000;
+
+7. Find the name and city of patient who visited physician on 13th july 2017
+SELECT p.p_name, p.city
+FROM Patient p
+JOIN visit v ON p.p_name = v.p_name
+WHERE v.date_of_visit = '2017-07-13';
+
+8. Get the name of the physician and no of patient visited to him
+SELECT ph.name, COUNT(v.p_name) AS patient_count
+FROM Physician ph
+JOIN visit v ON ph.reg_no = v.reg_no
+GROUP BY ph.name;
+
+9. Get date wise fees collected
+SELECT date_of_visit, SUM(fees) AS total_fees
+FROM visit
+GROUP BY date_of_visit;
+
+10. Display a Physician names who treated ‘Mina’
+SELECT ph.name
+FROM Physician ph
+JOIN visit v ON ph.reg_no = v.reg_no
+WHERE v.p_name = 'Mina';

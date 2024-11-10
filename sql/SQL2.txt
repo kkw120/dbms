@@ -1,0 +1,120 @@
+SQL Queries:
+Consider the given Database Schema: for problem statement 1
+Dept (Deptno , Name , Location, Managerempid)
+Employees (name, empid, address, city, dob, date_of_joining,gender, salary, deptno)
+Gender must take value ‘M’ or ‘F’.
+Project(Projectid, title,city).
+Works (empid , Projectid, total_hrs_worked);
+Dependant(empid, name_of_dependant, age, relation)
+Primary Key is underlined.
+1. Develop DDL to implement the above schema enforcing primary key, check constraints (F 
+and M for gender) and foreign key constraints.
+2. Insert data in each table . 
+3. Add column Mobile number in employee table
+4. Update mobile numbers for each employee.
+5. Develop DML to Populate Database
+6. Develop a SQL query to list employees having name starting with ‘S’
+7. Develop a SQL query to list department having location ‘Building 1’
+
+CREATE DATABASE assignment2;
+USE assignment2;
+
+
+1. DDL to Implement the Schema with Constraints
+This step creates each table, sets primary keys, enforces foreign key constraints, and applies a check constraint on gender.
+
+-- Create Dept Table
+CREATE TABLE Dept (
+    Deptno INT PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Location VARCHAR(100),
+    Managerempid INT
+);
+
+-- Create Employees Table
+CREATE TABLE Employees (
+    name VARCHAR(50),
+    empid INT PRIMARY KEY,
+    address VARCHAR(100),
+    city VARCHAR(50),
+    dob DATE,
+    date_of_joining DATE,
+    gender CHAR(1) CHECK (gender IN ('M', 'F')),
+    salary DECIMAL(10, 2),
+    deptno INT,
+    FOREIGN KEY (deptno) REFERENCES Dept(Deptno)
+);
+
+-- Create Project Table
+CREATE TABLE Project (
+    Projectid INT PRIMARY KEY,
+    title VARCHAR(100) NOT NULL,
+    city VARCHAR(50)
+);
+
+-- Create Works Table
+CREATE TABLE Works (
+    empid INT,
+    Projectid INT,
+    total_hrs_worked INT,
+    PRIMARY KEY (empid, Projectid),
+    FOREIGN KEY (empid) REFERENCES Employees(empid),
+    FOREIGN KEY (Projectid) REFERENCES Project(Projectid)
+);
+
+-- Create Dependant Table
+CREATE TABLE Dependant (
+    empid INT,
+    name_of_dependant VARCHAR(50),
+    age INT,
+    relation VARCHAR(50),
+    PRIMARY KEY (empid, name_of_dependant),
+    FOREIGN KEY (empid) REFERENCES Employees(empid)
+);
+
+2. Insert Data into Each Table
+Example insert statements are provided for each table. You can modify them as needed.
+
+-- Insert data into Dept table
+INSERT INTO Dept (Deptno, Name, Location, Managerempid)
+VALUES (1, 'HR', 'Building 1', 101),
+       (2, 'Finance', 'Building 2', 102);
+
+-- Insert data into Employees table
+INSERT INTO Employees (name, empid, address, city, dob, date_of_joining, gender, salary, deptno)
+VALUES ('Alice', 101, '123 Maple St', 'CityA', '1990-05-15', '2015-08-01', 'F', 75000, 1),
+       ('Sam', 102, '456 Oak St', 'CityB', '1988-11-30', '2014-09-15', 'M', 82000, 2);
+
+-- Insert data into Project table
+INSERT INTO Project (Projectid, title, city)
+VALUES (201, 'Project Alpha', 'CityA'),
+       (202, 'Project Beta', 'CityB');
+
+-- Insert data into Works table
+INSERT INTO Works (empid, Projectid, total_hrs_worked)
+VALUES (101, 201, 150),
+       (102, 202, 120);
+
+-- Insert data into Dependant table
+INSERT INTO Dependant (empid, name_of_dependant, age, relation)
+VALUES (101, 'Bob', 12, 'Son'),
+       (102, 'Jane', 30, 'Spouse');
+
+3. Add Column Mobile Number to Employee Table
+ALTER TABLE Employees ADD COLUMN mobile_number VARCHAR(15);
+
+4. Update Mobile Numbers for Each Employee
+Here’s an example for updating the mobile numbers; modify as appropriate for each employee:
+UPDATE Employees SET mobile_number = '123-456-7890' WHERE empid = 101;
+UPDATE Employees SET mobile_number = '987-654-3210' WHERE empid = 102;
+
+
+5. Develop DML to Populate Database
+For general DML, you would use more INSERT statements similar to those provided above. The exact DML will depend on the data you wish to populate.
+
+6. SQL Query to List Employees with Names Starting with 'S'
+SELECT * FROM Employees WHERE name LIKE 'S%';
+
+7. SQL Query to List Departments with Location ‘Building 1’
+SELECT * FROM Dept WHERE Location = 'Building 1';
+
